@@ -1,0 +1,28 @@
+{
+  "worm": {
+    "id": "exo-synchronicity-genesis",
+    "version": "0.1.0",
+    "created": "2026-07-04T21:57:00Z",
+    "author": "Ahmad Ali Parr",
+    "trust_anchor": "bifrost-worm-v2",
+    "provenance": {
+      "parent_repo": "snapkitty-agentos",
+      "research_program": "Indexical Topology (Filter Mesh Theorem)",
+      "prior_art_refs": [
+        "AHMAD_ALI_PARR_DEFENSIVE_COUNTER_PUBLICATION.pdf",
+        "AHMAD_ALI_PARR_SUBLEQ_49TH_CALL.pdf"
+      ]
+    },
+    "commitments": [
+      "Prolog topology facts define static connectivity only — no recursion, no variables",
+      "Verilog-A cells model voltage-controlled conductance switching (RON/ROFF)",
+      "Simulation verification checks skew, droop, and threshold noise margins",
+      "The environment is the compute substrate — not merely an input stream"
+    ],
+    "seal": {
+      "algorithm": "ed25519",
+      "pubkey": "genesis-only — rotate on first push",
+      "signature": "unsigned-genesis"
+    }
+  }
+}

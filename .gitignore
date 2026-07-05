@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+results/
+*.raw
+*.psf
+_sp.*
+*.log
+.DS_Store
+worm/receipts/*.sealed

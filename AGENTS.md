@@ -1,0 +1,30 @@
+# AGENTS.md — Exo-Synchronicity Solver Node
+
+## Identity
+
+- **Research Program**: Exo-Synchronicity (Indexical Topology)
+- **Operator**: Ahmad Ali Parr
+- **Domain**: P/PN Swarm Filter Meshes
+- **Logic Layer**: Prolog specification → Verilog-A analog simulation
+- **Provenance**: WORM-sealed receipts in `worm/receipts/`
+
+## P/NP Problem Class
+
+**Finding** a P/PN topology (wiring diagram + RC constants) that realizes a target operator activation table is NP-hard.
+
+**Verifying** a topology is P-time — run analog simulation, measure gate voltages, check skew/droop margins.
+
+## Solver Workflow
+
+1. **Read** `prolog/topology.pl` — problem facts (binds, operators, env_state)
+2. **Design** a netlist topology (port→gate routing)
+3. **Compile** with `netlister/emit_veriloga.py` → Verilog-A testbench
+4. **Simulate** with Spectre / Xyce / NGSpice
+5. **Verify** — check all operator gates fire at correct thresholds
+6. **Seal** — write receipt to `worm/receipts/`
+7. **Submit** — commit solution topology
+
+## Key Principle
+
+> The connection is the wire. The environment is the computer.
+> No variables. No state. Only topology.
