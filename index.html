@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exo-Synchronicity — Interactive Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    border-bottom: 1px solid #1a3a2a;
+  }
+  .header h1 {
+    font-size: 2.5em;
+    color: #00ffaa;
+    text-shadow: 0 0 30px #00ffaa44;
+    letter-spacing: 8px;
+  }
+  .header p {
+    color: #668877;
+    margin-top: 10px;
+    font-size: 0.9em;
+  }
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 0;
+  }
+  .stage {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .stage:hover {
+    transform: scale(1.02);
+  }
+  .stage:hover .box {
+    border-color: #00ffaa;
+    box-shadow: 0 0 30px #00ffaa33;
+  }
+  .stage.active .box {
+    border-color: #00ffaa;
+    box-shadow: 0 0 40px #00ffaa44;
+    background: #0a1a12;
+  }
+  .box {
+    border: 1px solid #1a4a2a;
+    border-radius: 8px;
+    padding: 20px 30px;
+    background: #0d0d0d;
+    min-width: 500px;
+    transition: all 0.3s;
+  }
+  .box-title {
+    font-size: 1.1em;
+    color: #00ffcc;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .box-title .num {
+    background: #00ffaa22;
+    color: #00ffaa;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+  }
+  .box-desc {
+    color: #889988;
+    font-size: 0.85em;
+    line-height: 1.5;
+  }
+  .box-code {
+    margin-top: 10px;
+    background: #050505;
+    border: 1px solid #1a2a1a;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 0.8em;
+    color: #00ddaa;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .arrow {
+    color: #1a5a3a;
+    font-size: 1.5em;
+    padding: 5px 0;
+    text-align: center;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; color: #00ffaa; }
+  }
+  .detail-panel {
+    position: fixed;
+    right: -500px;
+    top: 0;
+    width: 480px;
+    height: 100vh;
+    background: #0a0f0a;
+    border-left: 1px solid #1a4a2a;
+    padding: 30px;
+    transition: right 0.4s ease;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  .detail-panel.open {
+    right: 0;
+  }
+  .detail-panel h2 {
+    color: #00ffaa;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+  }
+  .detail-panel p {
+    color: #889988;
+    line-height: 1.7;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+  }
+  .detail-panel .tag {
+    display: inline-block;
+    background: #00ffaa11;
+    border: 1px solid #00ffaa33;
+    color: #00ffaa;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    margin: 3px;
+  }
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: 1px solid #334433;
+    color: #668866;
+    cursor: pointer;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-family: inherit;
+  }
+  .close-btn:hover {
+    border-color: #00ffaa;
+    color: #00ffaa;
+  }
+  .theorem-bar {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: #050a05;
+    border: 1px solid #1a3a1a;
+    border-radius: 6px;
+  }
+  .theorem-bar .label {
+    color: #668866;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .theorem-bar .value {
+    color: #00ffaa;
+    font-size: 0.85em;
+    margin-top: 4px;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: glow 1.5s infinite;
+  }
+  .status-dot.green { background: #00ff88; }
+  .status-dot.amber { background: #ffaa00; }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 4px currentColor; }
+    50% { box-shadow: 0 0 12px currentColor; }
+  }
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: #334433;
+    border-top: 1px solid #1a2a1a;
+    font-size: 0.8em;
+  }
+  .footer a { color: #00ffaa; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>EXO-SYNCHRONICITY</h1>
+  <p>The environment is not merely read as input. The environment becomes the compute substrate.</p>
+</div>
+
+<div class="pipeline" id="pipeline">
+
+  <div class="stage" onclick="showDetail('prolog')">
+    <div class="box">
+      <div class="box-title"><span class="num">01</span> Prolog Topology</div>
+      <div class="box-desc">Static facts define physical designators. No runtime logic. Only topology.</div>
+      <div class="box-code">binds(port_a, p_type, latched).
+valid_operator(op_and, [port_a, port_b], port_out).
+env_state(sensor_1, 3.3, 0.02).</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('datalog')">
+    <div class="box">
+      <div class="box-title"><span class="num">02</span> Datalog Reachability</div>
+      <div class="box-desc">Finite reachability analysis. Detect floating ports before compilation.</div>
+      <div class="box-code">reach(X, Y) :- binds(X, _, Y).
+reach(X, Z) :- reach(X, Y), reach(Y, Z).
+floating(P) :- port(P), not reach(_, P), not reach(P, _).</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('asp')">
+    <div class="box">
+      <div class="box-title"><span class="num">03</span> ASP Stable Worlds</div>
+      <div class="box-desc">Stable-world selection under constraints. Multiple valid meshes coexist.</div>
+      <div class="box-code">1 { mesh(E) : edge(E) } 1.
+:- mesh(E1), mesh(E2), conflict(E1, E2).
+:~ mesh(E). [weight(E)@2].</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('smt')">
+    <div class="box">
+      <div class="box-title"><span class="num">04</span> SMT Timing Bounds</div>
+      <div class="box-desc">Numeric feasibility. Voltage margins, skew, droop thresholds.</div>
+      <div class="box-code">(declare-const t_prop Real)
+(declare-const v_th Real)
+(assert (<= t_prop 1.2e-9))
+(assert (>= v_th 1.65))
+(check-sat)</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('netlister')">
+    <div class="box">
+      <div class="box-title"><span class="num">05</span> Verilog-A Netlister</div>
+      <div class="box-desc">Prolog facts compile to analog mesh. Physical designators become wires.</div>
+      <div class="box-code">module exo_mesh(in p, in n, out q);
+  analog begin
+    V(p, n) <+ V(q) * gain;
+    I(p, n) <+ V(p,n) / r_match;
+  end
+endmodule</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('simulation')">
+    <div class="box">
+      <div class="box-title"><span class="num">06</span> Analog Simulation</div>
+      <div class="box-desc">Spectre / Xyce / NGSpice. Skew, droop, threshold noise margins measured.</div>
+      <div class="box-code">.tran 1n 100n
+.meas tran skew MIN v(q)
+.meas tran droop MAX v(q)
+.meas tran t_prop TRIG v(in) VAL=1.65 TARG v(out) VAL=1.65</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('proofs')">
+    <div class="box">
+      <div class="box-title"><span class="num">07</span> Formal Proofs</div>
+      <div class="box-desc">5 theorems machine-checked in Isabelle/HOL + Lean 4. Zero sorry.</div>
+      <div class="box-code">theorem topology_preservation:
+  "PureFactFile F ⟹
+   TopologyEquivalent (BuildTopology F) (BuildTopology F)"
+  by (rule topology_preservation_aux)</div>
+    </div>
+  </div>
+
+  <div class="arrow">│<br>▼</div>
+
+  <div class="stage" onclick="showDetail('worm')">
+    <div class="box">
+      <div class="box-title"><span class="num">08</span> WORM Receipt</div>
+      <div class="box-desc">Hash-chained audit trail. SHA-256. Immutable. Reproducible.</div>
+      <div class="box-code">{
+  "chain_position": 42,
+  "prev_hash": "a8f3e2...",
+  "receipt_hash": "7c2b1d...",
+  "theorem_status": "externally_verified",
+  "timestamp": "2026-07-05T00:00:00Z"
+}</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Theorem Status Bar -->
+<div style="max-width: 600px; margin: 0 auto; padding: 0 20px 40px;">
+  <div class="theorem-bar">
+    <div class="label">Machine-Checker Status</div>
+    <div class="value">
+      <span class="status-dot green"></span>Isabelle/HOL — 5/5 theorems, 0 sorry<br>
+      <span class="status-dot green"></span>Lean 4 — 5/5 theorems, 0 admit<br>
+      <span class="status-dot amber"></span>Coq / Idris / SMT-LIB — emitted targets
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Syntax is liability. Semantics are truth. Proof is the receipt.</p>
+  <p style="margin-top: 10px;">
+    <a href="https://github.com/SNAPKITTYWEST/exo-synchronicity">exo-synchronicity</a> ·
+    <a href="https://github.com/SNAPKITTYWEST/mathrosetta">mathrosetta</a>
+  </p>
+</div>
+
+<!-- Detail Panel -->
+<div class="detail-panel" id="detailPanel">
+  <button class="close-btn" onclick="closeDetail()">✕ close</button>
+  <h2 id="detailTitle"></h2>
+  <p id="detailBody"></p>
+  <div id="detailTags"></div>
+</div>
+
+<script>
+const details = {
+  prolog: {
+    title: 'Prolog Topology Specification',
+    body: `The entry point. A pure fact file defines three physical designators:
+
+τ = (Port_ID, Polarity, Latch_State)
+
+No variables. No state. No runtime logic. The Prolog file IS the topology — not a description of it. Facts like binds/2 and valid_operator/2 are compiled directly into physical wires.
+
+The novelty: Prolog is used as a hardware description language, not a programming language. The semantics are topological, not computational.`,
+    tags: ['Prolog', 'SWI-Prolog', 'Static Topology', 'P/PN Designators']
+  },
+  datalog: {
+    title: 'Datalog Reachability Analysis',
+    body: `Finite reachability determines whether every port in the mesh is connected. Datalog (Souffle) runs in polynomial time — it's the P-time verifier for the NP-hard topology search.
+
+Floating ports are detected before compilation ever runs. If a port has no incident edge and is not ground, the mesh is invalid.
+
+This is the first gate: if reachability fails, nothing downstream matters.`,
+    tags: ['Datalog', 'Souffle', 'P-time', 'Floating Port Detection']
+  },
+  asp: {
+    title: 'ASP Stable World Selection',
+    body: `Answer Set Programming selects stable meshes under constraints. Multiple valid configurations coexist — ASP finds all of them.
+
+The weight constraint ":~ mesh(E). [weight(E)@2]." penalizes unnecessary edges. The optimizer selects the minimal mesh that satisfies all operator activation constraints.
+
+This is where NP-hardness lives: finding the optimal mesh among exponentially many candidates.`,
+    tags: ['ASP', 'Clingo', 'Stable Models', 'Optimization']
+  },
+  smt: {
+    title: 'SMT Timing Verification',
+    body: `Z3 checks numeric feasibility. Propagation delays, voltage thresholds, skew margins — all expressed as SMT constraints.
+
+(<= t_prop 1.2e-9) means the signal must propagate in under 1.2 nanoseconds.
+(>= v_th 1.65) means the threshold voltage must be at least 1.65V.
+
+If Z3 returns unsat, the topology is physically impossible. This is the second gate.`,
+    tags: ['SMT-LIB', 'Z3', 'Timing Analysis', 'Voltage Feasibility']
+  },
+  netlister: {
+    title: 'Verilog-A Netlister',
+    body: `The compiler. Prolog facts become Verilog-A module declarations. Each binds/2 fact becomes a wire. Each valid_operator/2 becomes a subcircuit.
+
+The output is a complete analog testbench ready for simulation. No manual netlist authoring — the Prolog file IS the netlist source.
+
+This is the bridge between logical topology and physical simulation.`,
+    tags: ['Verilog-A', 'Python', 'Analog Mesh', 'Auto-Compilation']
+  },
+  simulation: {
+    title: 'Analog Simulation',
+    body: `Spectre, Xyce, or NGSpice runs the compiled Verilog-A testbench. The simulator measures:
+
+- Skew: timing difference between expected and actual propagation
+- Droop: voltage drop under load
+- Threshold noise margins: how much noise the mesh can tolerate
+
+The simulation report feeds back into the WORM receipt. This is ground truth — the physical behavior of the compiled mesh.`,
+    tags: ['Spectre', 'Xyce', 'NGSpice', 'SPICE', 'Analog Verification']
+  },
+  proofs: {
+    title: 'Formal Proof Stack',
+    body: `Five theorems machine-checked in both Isabelle/HOL and Lean 4:
+
+1. Topology Preservation — same facts produce equivalent topologies
+2. Reachability Preservation — reachability is invariant across compilation
+3. No Floating Ports — every non-ground node has an incident edge
+4. Conduction Soundness — edge conductances match annotations
+5. WORM Receipt Determinism — identical inputs yield identical receipts
+
+Zero sorry. Zero admit. Zero axioms. Every proof constructive.
+
+This is not claiming the entire physical world is proven. It's claiming the parts that must not drift are machine-checked.`,
+    tags: ['Isabelle/HOL', 'Lean 4', 'Constructive Proofs', 'Zero Sorry']
+  },
+  worm: {
+    title: 'WORM Receipt Chain',
+    body: `Write Once Read Many. SHA-256 hash chaining creates an immutable audit trail.
+
+Each receipt contains:
+- chain_position: sequential index
+- prev_hash: hash of previous receipt (chain integrity)
+- receipt_hash: SHA-256 of this receipt's content
+- theorem_status: externally_verified, placeholder_detected, or emitted
+- timestamp: ISO 8601
+
+The chain cannot be tampered with. Changing one receipt breaks all subsequent hashes. This is provenance — not just logging.`,
+    tags: ['SHA-256', 'Hash Chain', 'Audit Trail', 'Immutable Log']
+  }
+};
+
+function showDetail(key) {
+  const d = details[key];
+  document.getElementById('detailTitle').textContent = d.title;
+  document.getElementById('detailBody').textContent = d.body;
+  document.getElementById('detailTags').innerHTML = d.tags
+    .map(t => `<span class="tag">${t}</span>`).join('');
+  document.getElementById('detailPanel').classList.add('open');
+
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDetail();
+});
+</script>
+
+</body>
+</html>
