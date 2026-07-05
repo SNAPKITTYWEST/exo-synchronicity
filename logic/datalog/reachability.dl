@@ -1,0 +1,25 @@
+// logic/datalog/reachability.dl
+// Finite graph reachability and disconnected port detection.
+
+.decl edge(a:symbol, b:symbol)
+.decl reachable(a:symbol, b:symbol)
+.decl floating_port(p:symbol)
+.decl bound_port(p:symbol)
+.decl connected_to_sigma(p:symbol)
+
+// Loading edges from topology
+edge("port_42", "gate_alpha").
+edge("port_07", "gate_alpha").
+edge("port_99", "gate_beta").
+edge("port_13", "gate_gamma").
+edge("port_88", "gate_gamma").
+edge("sigma", "port_42").
+edge("sigma", "port_99").
+
+reachable(a,b) :- edge(a,b).
+reachable(a,c) :- reachable(a,b), edge(b,c).
+
+// A port is floating if it is bound but not reachable from sigma
+floating_port(p) :- bound_port(p), !reachable("sigma", p).
+
+.output floating_port

@@ -5,13 +5,12 @@ import os, re, sys
 
 # Files that must contain ZERO rules (pure static facts only)
 PURE_FACT_FILES = [
-    '../prolog/topology.pl',
-    '../prolog/examples/three_cell_mesh.pl',
+    '../logic/prolog/topology.pl',
+    '../logic/prolog/examples/three_cell_mesh.pl',
 ]
 
-# These files intentionally contain rules (operators.pl has validation queries)
 RULE_FILES = [
-    '../prolog/operators.pl',
+    '../logic/prolog/schema.pl',
 ]
 
 

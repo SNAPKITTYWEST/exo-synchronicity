@@ -72,7 +72,7 @@ def generate_testbench(facts, output_path, source='unknown'):
 
 def main():
     parser = argparse.ArgumentParser(description='Prolog -> Verilog-A Netlister')
-    parser.add_argument('--spec', default='prolog/examples/three_cell_mesh.pl')
+    parser.add_argument('--spec', default='logic/prolog/examples/three_cell_mesh.pl')
     parser.add_argument('--output', default='veriloga/exo_mesh_tb.va')
     parser.add_argument('--validate-only', action='store_true')
     args = parser.parse_args()

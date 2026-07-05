@@ -6,7 +6,7 @@ from parser import parse_prolog, parse_paths, validate_topology
 
 
 def test_core_topology():
-    spec = os.path.join(os.path.dirname(__file__), '..', 'prolog', 'topology.pl')
+    spec = os.path.join(os.path.dirname(__file__), '..', 'logic', 'prolog', 'topology.pl')
     facts = parse_prolog(spec)
     errors = validate_topology(facts)
 
@@ -25,7 +25,7 @@ def test_core_topology():
 
 
 def test_three_cell_example():
-    spec = os.path.join(os.path.dirname(__file__), '..', 'prolog', 'examples', 'three_cell_mesh.pl')
+    spec = os.path.join(os.path.dirname(__file__), '..', 'logic', 'prolog', 'examples', 'three_cell_mesh.pl')
     facts = parse_prolog(spec)
     errors = validate_topology(facts)
 

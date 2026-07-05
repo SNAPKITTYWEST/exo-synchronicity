@@ -12,7 +12,7 @@
 ### 1. Validate Prolog topology
 
 ```bash
-swipl -q -s prolog/topology.pl -s prolog/operators.pl
+swipl -q -s logic/prolog/topology.pl -s logic/prolog/schema.pl
 ```
 
 Expected output — no errors, facts load cleanly.
@@ -20,7 +20,7 @@ Expected output — no errors, facts load cleanly.
 ### 2. Generate Verilog-A netlist
 
 ```bash
-python netlister/emit_veriloga.py --spec prolog/examples/three_cell_mesh.pl --output veriloga/exo_mesh_tb.va
+python netlister/emit_veriloga.py --spec logic/prolog/examples/three_cell_mesh.pl --output veriloga/exo_mesh_tb.va
 ```
 
 Expected output — netlister prints parsed facts and validation pass.

@@ -43,12 +43,16 @@ logical facts
 
 ```
 exo-synchronicity/
-├── prolog/          # Static topology facts (binds/2, valid_operator/2)
+├── logic/           # Multi-logic verification stack
+│   ├── prolog/      #   Static topology (binds/2, valid_operator/2)
+│   ├── datalog/     #   Finite reachability / floating port detection
+│   ├── asp/         #   Stable-world selection under constraints
+│   └── smt/         #   Numeric timing/voltage feasibility
 ├── netlister/       # Prolog → Verilog-A compiler
 ├── veriloga/        # Reference Verilog-A cell implementations
 ├── simulations/     # Spectre / Xyce / NGSpice run scripts
 ├── tests/           # Python + Prolog test suites
-├── docs/            # Theory, architecture, novelty, simulation checks
+├── docs/            # Theory, architecture, novelty, reproducibility
 ├── reports/         # Generated whitepapers and simulation reports
 └── worm/            # WORM-sealed receipts (provenance chain)
 ```
@@ -59,11 +63,20 @@ exo-synchronicity/
 git clone <this-repo>
 cd exo-synchronicity
 
-# Validate topology
-python tests/test_topology_facts.py
+# Validate topology (Prolog)
+swipl -q -s logic/prolog/topology.pl -s logic/prolog/schema.pl
+
+# Check reachability (Datalog)
+souffle logic/datalog/reachability.dl
+
+# Select stable mesh (ASP)
+clingo logic/asp/mesh_worlds.lp logic/asp/constraints.lp
+
+# Check timing feasibility (SMT)
+z3 logic/smt/timing_bounds.smt2
 
 # Compile Prolog → Verilog-A
-python netlister/emit_veriloga.py --spec prolog/examples/three_cell_mesh.pl
+python netlister/emit_veriloga.py --spec logic/prolog/examples/three_cell_mesh.pl
 
 # Run analog simulation (NGSpice)
 cd simulations/ngspice && ngspice -b exo_mesh_tb.va

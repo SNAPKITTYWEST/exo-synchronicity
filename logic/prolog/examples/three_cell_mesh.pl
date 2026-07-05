@@ -1,5 +1,4 @@
-% three_cell_mesh.pl — Example: 3-cell P/PN Swarm
-% Used as default input for netlister/emit_veriloga.py
+% logic/prolog/examples/three_cell_mesh.pl — Example: 3-cell P/PN Swarm
 
 binds(port_0, sensor_alpha).
 binds(port_1, sensor_beta).

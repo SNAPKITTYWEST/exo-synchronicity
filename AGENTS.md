@@ -16,13 +16,14 @@
 
 ## Solver Workflow
 
-1. **Read** `prolog/topology.pl` — problem facts (binds, operators, env_state)
-2. **Design** a netlist topology (port→gate routing)
-3. **Compile** with `netlister/emit_veriloga.py` → Verilog-A testbench
-4. **Simulate** with Spectre / Xyce / NGSpice
-5. **Verify** — check all operator gates fire at correct thresholds
-6. **Seal** — write receipt to `worm/receipts/`
-7. **Submit** — commit solution topology
+1. **Read** `logic/prolog/topology.pl` — problem facts (binds, operators, env_state)
+2. **Check** reachability with `logic/datalog/reachability.dl`
+3. **Select** stable world with `logic/asp/mesh_worlds.lp`
+4. **Verify** timing with `logic/smt/timing_bounds.smt2`
+5. **Compile** with `netlister/emit_veriloga.py` → Verilog-A testbench
+6. **Simulate** with Spectre / Xyce / NGSpice
+7. **Seal** — write receipt to `worm/receipts/`
+8. **Submit** — commit solution topology
 
 ## Key Principle
 
