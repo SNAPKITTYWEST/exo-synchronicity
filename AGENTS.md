@@ -7,6 +7,7 @@
 - **Domain**: P/PN Swarm Filter Meshes
 - **Logic Layer**: Prolog specification → Verilog-A analog simulation
 - **Provenance**: WORM-sealed receipts in `worm/receipts/`
+- **Proof Stack**: Isabelle/HOL + Lean 4 (5 theorems, zero sorry/admit)
 
 ## P/NP Problem Class
 
@@ -24,6 +25,21 @@
 6. **Simulate** with Spectre / Xyce / NGSpice
 7. **Seal** — write receipt to `worm/receipts/`
 8. **Submit** — commit solution topology
+
+## Proof Verification
+
+Formal proofs live in `proofs/` with two machine-checker tracks:
+
+- **Isabelle/HOL**: `isabelle build -D proofs/isabelle`
+- **Lean 4**: `cd proofs/lean4 && lake build`
+
+Theorems (all zero sorry/admit):
+- Topology Preservation
+- Reachability Preservation
+- No Floating Ports
+- Conduction Soundness
+- WORM Receipt Determinism
+- Sovereign Stack Correctness (composite)
 
 ## Key Principle
 
