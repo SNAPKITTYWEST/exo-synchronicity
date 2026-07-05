@@ -1,3 +1,19 @@
+<p align="center">
+  <img src="docs/assets/exo_synchronicity_poster.svg" alt="Exo-Synchronicity — environment as compute substrate" width="100%">
+</p>
+
+<p align="center">
+  <a href="https://snapkittywest.github.io/exo-synchronicity/">Live Page</a>
+  ·
+  <a href="./proofs/">Formal Proofs</a>
+  ·
+  <a href="./docs/">Docs</a>
+  ·
+  <a href="./reports/">Reports</a>
+</p>
+
+---
+
 # Exo-Synchronicity
 
 > Environment as compute substrate.
