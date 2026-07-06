@@ -35,33 +35,32 @@ Prolog facts
 ## Theorem Kernel
 
 ```text
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                                                                              ║
-║   ███████╗██╗  ██╗ ██████╗        ███████╗██╗   ██╗███╗   ██╗ ██████╗      ║
-║   ██╔════╝╚██╗██╔╝██╔═══██╗       ██╔════╝╚██╗ ██╔╝████╗  ██║██╔════╝      ║
-║   █████╗   ╚███╔╝ ██║   ██║       ███████╗ ╚████╔╝ ██╔██╗ ██║██║           ║
-║   ██╔══╝   ██╔██╗ ██║   ██║       ╚════██║  ╚██╔╝  ██║╚██╗██║██║           ║
-║   ███████╗██╔╝ ██╗╚██████╔╝       ███████║   ██║   ██║ ╚████║╚██████╗      ║
-║   ╚══════╝╚═╝  ╚═╝ ╚═════╝        ╚══════╝   ╚═╝   ╚═╝  ╚═══╝ ╚═════╝      ║
-║                                                                              ║
-║                 ENVIRONMENT AS COMPUTE SUBSTRATE                             ║
-║                                                                              ║
-║   Prolog Facts  →  Topology Graph  →  Verilog-A Mesh                         ║
-║        →  Simulation Report  →  Theorem Targets  →  WORM Receipt             ║
-║                                                                              ║
-║   Σ(t) pulse conducts only through valid P / PN topology.                    ║
-║   Logic does not merely branch. Logic becomes physical constraint.            ║
-║                                                                              ║
-║   THEOREM KERNEL                                                             ║
-║   ✓ Topology Preservation                                                     ║
-║   ✓ Reachability Preservation                                                 ║
-║   ✓ No Floating Ports                                                         ║
-║   ✓ Conduction Soundness                                                      ║
-║   ✓ WORM Receipt Determinism                                                  ║
-║                                                                              ║
-║   Syntax is liability. Semantics are truth. Proof is the receipt.             ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
++------------------------------------------------------------------+
+|                                                                  |
+|   EXO-SYNCHRONICITY                                              |
+|                                                                  |
+|   ENVIRONMENT AS COMPUTE SUBSTRATE                               |
+|                                                                  |
+|   Prolog Facts  →  Topology Graph  →  Verilog-A Mesh             |
+|        →  Simulation Report  →  Theorem Targets  →  WORM Receipt |
+|                                                                  |
+|   Sigma(t) pulse conducts only through valid P / PN topology.    |
+|   Logic does not merely branch. Logic becomes physical constraint.|
+|                                                                  |
+|   THEOREM KERNEL                                                 |
+|   [PROVED] Topology Preservation                                 |
+|   [PROVED] Reachability Preservation                             |
+|   [PROVED] No Floating Ports                                     |
+|   [PROVED] Conduction Soundness                                  |
+|   [PROVED] WORM Receipt Determinism                              |
+|                                                                  |
+|   [SPEC] Laplacian Symmetry                                      |
+|   [SPEC] Ground Safety                                           |
+|   [SPEC] Energy Non-Negative                                     |
+|                                                                  |
+|   Syntax is liability. Semantics are truth. Proof is the receipt. |
+|                                                                  |
++------------------------------------------------------------------+
 ```
 
 ## Live Demo Trace
@@ -72,14 +71,14 @@ Prolog facts
 [GRAPH]    reachability index constructed
 [NETLIST]  emitting Verilog-A mesh...
 [ANALOG]   checking conductance annotations...
-[PULSE]    Σ(t) propagated through P/PN path
+[PULSE]    Sigma(t) propagated through P/PN path
 [SIM]      skew=within-margin droop=within-margin threshold=stable
 [PROOF]    topology_preservation .......... OK
 [PROOF]    reachability_preservation ....... OK
 [PROOF]    no_floating_ports ............... OK
 [PROOF]    conduction_soundness ............ OK
 [PROOF]    worm_receipt_determinism ........ OK
-[WORM]     receipt: sha256:EXO-Σ-7f9c... sealed
+[WORM]     receipt: sha256:EXO-Sigma-7f9c... sealed
 [STATUS]   syntax rejected · semantics preserved · proof receipted
 ```
 
@@ -87,19 +86,22 @@ Prolog facts
 
 ## What this proves
 
-The first formal kernel covers five invariants:
+The formal kernel covers seven invariants:
 
-| Theorem                   | Meaning                                                             |
-| ------------------------- | ------------------------------------------------------------------- |
-| Topology Preservation     | The topology built from facts does not silently drift.              |
-| Reachability Preservation | Reachable paths remain identical across equivalent topology builds. |
-| No Floating Ports         | Every non-ground node has at least one incident edge.               |
-| Conduction Soundness      | Edge conductance matches Verilog-AMS annotation.                    |
-| WORM Receipt Determinism  | Identical inputs produce identical receipts.                        |
+| Theorem | Status | Meaning |
+|---------|--------|---------|
+| Topology Preservation | PROVED | The topology built from facts does not silently drift. |
+| Reachability Preservation | PROVED | Reachable paths remain identical across equivalent topology builds. |
+| No Floating Ports | PROVED | Every non-ground node has at least one incident edge. |
+| Conduction Soundness | PROVED | Edge conductance matches Verilog-AMS annotation. |
+| WORM Receipt Determinism | PROVED | Identical inputs produce identical receipts. |
+| Laplacian Symmetry | SPEC | The Laplacian matrix is symmetric for undirected graphs. |
+| Ground Safety | SPEC | Non-ground nodes are incident, reachable to ground, or terminals. |
+| Energy Non-Negative | SPEC | Total energy is non-negative for any voltage assignment. |
 
-The composite theorem (`Sovereign_Stack.thy` / `SovereignStack.lean`) asserts all five hold simultaneously.
+**4 PROVED. 3 SPEC. Zero `sorry` in PROVED theorems.**
 
-**Zero `sorry`. Zero `admit`. Zero `oops`. Every proof constructive.**
+See [PROOF_STATUS.md](PROOF_STATUS.md) for detailed status and next actions.
 
 ---
 
@@ -156,14 +158,16 @@ exo-synchronicity/
 │   ├── datalog/     #   Finite reachability / floating port detection
 │   ├── asp/         #   Stable-world selection under constraints
 │   └── smt/         #   Numeric timing/voltage feasibility
-├── netlister/       # Prolog → Verilog-A compiler
+├── netlister/       # Prolog -> Verilog-A compiler
 ├── veriloga/        # Reference Verilog-A cell implementations
 ├── simulations/     # Spectre / Xyce / NGSpice run scripts
 ├── proofs/          # Isabelle/HOL + Lean 4 formal proof stack
 ├── tests/           # Python + Prolog test suites
 ├── docs/            # Theory, architecture, novelty, reproducibility
 ├── reports/         # Generated whitepapers and simulation reports
-└── worm/            # WORM-sealed receipts (provenance chain)
+├── worm/            # WORM-sealed receipts (provenance chain)
+├── PROOF_STATUS.md  # Theorem status tracker
+└── README.md
 ```
 
 ## Getting Started
@@ -184,7 +188,7 @@ clingo logic/asp/mesh_worlds.lp logic/asp/constraints.lp
 # Check timing feasibility (SMT)
 z3 logic/smt/timing_bounds.smt2
 
-# Compile Prolog → Verilog-A
+# Compile Prolog -> Verilog-A
 python netlister/emit_veriloga.py --spec logic/prolog/examples/three_cell_mesh.pl
 
 # Run analog simulation (NGSpice)
@@ -201,6 +205,8 @@ cd proofs/lean4 && lake build
 ## Status
 
 **v0.2.0** — Research substrate with formal proof stack.
+
+4/7 theorems PROVED. 3/7 SPEC (pending full Lean proofs).
 
 ## License
 

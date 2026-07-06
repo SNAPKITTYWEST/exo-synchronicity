@@ -1,9 +1,56 @@
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Lean 4
+build/
+lake-packages/
+
+# Isabelle
+output/
+document/
+
+# Simulation
 results/
 *.raw
 *.psf
 _sp.*
 *.log
+*.dat
+*.csv
+
+# Verilog-A
+*.vcd
+*.raw
+*.psf
+
+# OS
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Secrets (never commit)
+.env
+.env.*
+credentials*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# WORM receipts (private)
 worm/receipts/*.sealed
